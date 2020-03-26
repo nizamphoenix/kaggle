@@ -54,3 +54,73 @@ for df_val,num in tqdm(zip(df_vals,val_nums),total=len(df_vals)):
         except Exception as err:
             #print(err)
             pass
+        
+def calc_loss(pred, targets):
+  return F.binary_cross_entropy(F.sigmoid(pred), targets)
+
+def train_model(epoch, optimizer, scheduler=None, history=None):
+    model.train()
+    total_loss = 0
+    
+    t = tqdm(train_loader)
+    for i, (img_batch, y_batch) in enumerate(t):
+        img_batch = img_batch.cuda().float()
+        y_batch = y_batch.cuda().float()
+
+        optimizer.zero_grad()
+
+        out = model(img_batch)
+        loss = calc_loss(out, y_batch)
+
+        total_loss += loss
+        t.set_description(f'Epoch {epoch+1}/{n_epochs}, LR: %6f, Loss: %.4f'%(optimizer.state_dict()['param_groups'][0]['lr'],total_loss/(i+1)))
+
+        if history is not None:
+          history.loc[epoch + i / len(X), 'train_loss'] = loss.data.cpu().numpy()
+          history.loc[epoch + i / len(X), 'lr'] = optimizer.state_dict()['param_groups'][0]['lr']
+
+        loss.backward()
+        optimizer.step()
+        if scheduler is not None:
+          scheduler.step()
+
+def evaluate_model(epoch, scheduler=None, history=None):
+    model.eval()
+    loss = 0
+    pred = []
+    real = []
+    with torch.no_grad():
+        for img_batch, y_batch in val_loader:
+            img_batch = img_batch.cuda().float()
+            y_batch = y_batch.cuda().float()
+
+            op = model(img_batch)
+            temp_loss = calc_loss(op, y_batch)
+            loss += temp_loss
+            
+            for j in op:
+              pred.append(F.sigmoid(j))
+            for i in y_batch:
+              real.append(i.data.cpu())
+    
+    pred = [p.data.cpu().numpy() for p in pred]
+    f_pred = pred
+    pred = [np.round(p) for p in pred]
+    pred = np.array(pred)
+    acc = sklearn.metrics.recall_score(real, pred, average='macro')
+
+    real = [r.item() for r in real]
+    f_pred = np.array(f_pred).clip(0.1, 0.9)
+    
+
+    loss /= len(val_loader)
+    
+    if history is not None:
+        history.loc[epoch, 'dev_loss'] = loss.cpu().numpy()
+    
+    if scheduler is not None:
+      scheduler.step(loss)
+
+    print(f'Development loss: %.4f, Acc: %.6f'%(loss,acc))
+    
+    return loss
