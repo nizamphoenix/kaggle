@@ -18,6 +18,31 @@ from torch.utils.data import Dataset, DataLoader
 mean = [0.485, 0.456, 0.406]
 std = [0.229, 0.224, 0.225]
 
+
+
+def get_path(img_name,suffix):
+    path = '../input/deepfake/DeepFake'+suffix+'/DeepFake'+suffix+'/' + img_name.replace(".mp4","")+ '.jpg'
+    if not os.path.exists(path):
+        raise Exception
+    return path
+
+def get_all_paths(df_list,suffixes_list):
+    LABELS = ['REAL','FAKE']
+    paths = []
+    labels = []
+    for df,suffix in tqdm(zip(df_list,suffixes_list),total=len(df_list)):
+        images = list(df.columns.values)
+        for img_name in images:
+            try:
+                paths.append(get_path(img_name,suffix))
+                labels.append(LABELS.index(df[img_name]['label']))
+            except Exception as err:
+                #print(err)
+                pass
+    return paths,labels
+
+
+
 class ImageDataset(Dataset):
     def __init__(self, X, y, training=True, transform=None):
         self.X = X
