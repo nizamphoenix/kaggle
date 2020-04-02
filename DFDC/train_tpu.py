@@ -73,7 +73,7 @@ def run(index):
     )
     valid_data_loader=torch.utils.data.DataLoader(
         valid_dataset,
-        batch_size=8,#can make changes here
+        batch_size=32,#can make changes here
         sampler=valid_sampler
     )
     
