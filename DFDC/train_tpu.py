@@ -12,7 +12,58 @@ from scipy import stats
 import sys
 import warnings
 warnings.filterwarnings('ignore')
+class Head(torch.nn.Module):
+    def __init__(self, in_f, out_f):
+        super().__init__()
 
+        self.f = nn.Flatten()
+        
+        self.b1 = nn.BatchNorm1d(in_f)#in_f=2048
+        self.d1 = nn.Dropout(0.40)
+        
+        self.l2 = nn.Linear(in_f, 512)
+        self.r2  = nn.ReLU()
+        self.b2 = nn.BatchNorm1d(512)
+        self.d2 = nn.Dropout(0.30)
+
+        self.l3 = nn.Linear(512, 1024)
+        self.r3  = nn.ReLU()
+        self.b3 = nn.BatchNorm1d(1024)
+        self.d3 = nn.Dropout(0.30)
+        
+        self.o = nn.Linear(1024, out_f)#out_f=1
+        
+        
+       
+    def forward(self, x):
+        x = self.f(x)
+        
+        x = self.b1(x)
+        x = self.d1(x)
+            
+        x = self.l2(x)
+        x = self.r2(x)
+        x = self.b2(x)
+        x = self.d2(x)
+        
+        x = self.l3(x)
+        x = self.r3(x)
+        x = self.b3(x)
+        x = self.d3(x)
+        
+        out = self.o(x)
+        return out
+
+    
+class FCN(torch.nn.Module):
+    def __init__(self, base, in_f):
+        super().__init__()
+        self.base = base
+        self.h1 = Head(in_f, 1)
+  
+    def forward(self, x):
+        x = self.base(x)
+        return self.h1(x)
 def calculate_loss(preds, targets):
     return F.binary_cross_entropy(F.sigmoid(preds), targets)
 
