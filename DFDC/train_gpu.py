@@ -25,7 +25,8 @@ model = get_model("xception", pretrained=True)
 # model = get_model("resnet18", pretrained=True)
 model = nn.Sequential(*list(model.children())[:-1]) # Remove original output layer
 model[0].final_block.pool = nn.Sequential(nn.AdaptiveAvgPool2d(1))
-# model[0].final_pool = nn.Sequential(nn.AdaptiveAvgPool2d(1))
+
+
 class Head(torch.nn.Module):
     def __init__(self, in_f, out_f):
         super().__init__()
