@@ -200,7 +200,7 @@ def evaluate_model(epoch, scheduler=None, history=None):
     f_pred = np.array(f_pred).clip(0.1, 0.9)
     
 
-    loss /= len(val_loader)
+    loss = loss/len(val_loader)
     
     if history is not None:
         history.loc[epoch, 'dev_loss'] = loss.cpu().numpy()
