@@ -22,7 +22,9 @@ std = [0.229, 0.224, 0.225]
 
 from pytorchcv.model_provider import get_model
 model = get_model("xception", pretrained=True)
-# model = get_model("resnet18", pretrained=True)
+#model = get_model("resnet18", pretrained=True)
+#model = get_model("resnet50", pretrained=True)
+
 model = nn.Sequential(*list(model.children())[:-1]) # Remove original output layer
 model[0].final_block.pool = nn.Sequential(nn.AdaptiveAvgPool2d(1))
 
