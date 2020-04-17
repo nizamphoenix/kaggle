@@ -1,5 +1,6 @@
 install.packages('NHPoisson',dependencies = T)
 library(NHPoisson)
+
 tB <- BarTxTn$ano + rep(c(0:152) / 153,55)
 time<-tB
 feature<-BarTxTn$Tx
@@ -14,6 +15,6 @@ abline(v=mean(op$thresh),col='red')
 abline(v=op$thresh[match(max(op$DI[1:length(op$DI)-1]),op$DI)],col='blue')
 abline(v=op$thresh[which.min(abs(diff))],col='green')
 
-thresh1<-mean(op$thresh)#is the mean threshold
+thresh1<-mean(op$thresh)#is the mean threshold for POT approach
 thresh2<-op$thresh[match(max(op$DI[1:length(op$DI)-1]),op$DI)]#mode threshold
 thresh3<-op$thresh[which.min(abs(diff))]
