@@ -1,6 +1,3 @@
-install.packages('NHPoisson',dependencies = T)
-library(NHPoisson)
-
 tB <- BarTxTn$ano + rep(c(0:152) / 153,55)
 time<-tB
 feature<-BarTxTn$Tx
