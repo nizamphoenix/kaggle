@@ -46,11 +46,7 @@ class Head(torch.nn.Module):
         x = self.b2(x)
         x = self.d2(x)
         
-        x = self.l3(x)
-        x = self.r3(x)
-        x = self.b3(x)
-        x = self.d3(x)
-        
+
         out = self.o(x)
         return out
 
