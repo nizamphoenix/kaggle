@@ -1,4 +1,4 @@
-#REMOVING OUTLIERS: POINTS OUTSIDE 3SD
+#REMOVING OUTLIERS: removing data points not within 2-Standard deviations
 temp = []
 for i in range(10): 
     print('Processing Batch-{}'.format(i+1))
