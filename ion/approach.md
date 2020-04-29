@@ -9,7 +9,8 @@ The channels are classified broadly into 2 categories depending on whether they 
   -- Model-2 is dedicated to modelling data from batch3 until batch10.  
   
 
-### Model1: DecisionTree classifying a channel as either open or closed.
+### Model1: 
+  DecisionTree classifying a channel as either open or closed.
 ### Model2:  
   1. XGBoost: gives ~46% accuracy.  
   2. Feed-forward neural network with 2 hidden layers: gives 51% accuracy.  
