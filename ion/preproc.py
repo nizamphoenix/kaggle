@@ -60,4 +60,13 @@ def preproc(train,test):
             counter+=1
             #print(key,value)
     print("No of signal values that overlap:",counter)
+    channel_probs = []
+    for sig,chan_dict in tqdm(special_signals.items()):
+        for i,j in chan_dict.items():
+            #print(sig,i,np.round(j/sum(chan_dict.values()),4))
+            channel_probs.append((sig,i,np.round(j/sum(chan_dict.values()),4)))
+    df_channel_probs = pd.DataFrame(channel_probs)
+    df_channel_probs.columns=['signal','open_channels','prob']
+    result = pd.merge(train, df_channel_probs, how='left', on=['signal','open_channels'])
+    result = result.fillna(1)
     return train,test
