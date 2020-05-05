@@ -52,4 +52,12 @@ def preproc(train,test):
     print('len(train_dict)',len(train_dict)) 
     sns.distplot(list(train_dict.keys()))
     plt.show()
+    counter = 0
+    special_signals={}#key:signal value value:channels
+    for key,value in tqdm(train_info_dict.items()):
+        if len(value)>1:
+            special_signals[key] = value
+            counter+=1
+            #print(key,value)
+    print("No of signal values that overlap:",counter)
     return train,test
