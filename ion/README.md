@@ -1,3 +1,7 @@
+Many diseases, including cancer, are believed to have a contributing factor in common, the **Ion channels**, which are pore-forming proteins present in animals and plants. When ion channels open, they pass electric currents. Determining the number of channels that open is critical to the study of diseases.Existing methods of detecting these state changes are slow and laborious. These difficulties limit the volume of ion channel current analysis that can be used in research. Scientists hope that Machine Learning could enable rapid automatic detection of ion channel current events in raw data.  
+https://www.kaggle.com/c/liverpool-ion-switching/  
+
+#### Approach:  
 The channels are classified broadly into 2 categories depending on whether they have a low probability of opening(low conductance) or a high probability of opening(high conductance):-  
 
 1. Batch1 and Batch2 represent low-probability channels: binary classification  
