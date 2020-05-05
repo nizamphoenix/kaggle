@@ -44,4 +44,12 @@ def preproc(train,test):
     test['prev'][500000+1:1000000] = test['signal'][500000:1000000-1]
     test['prev'][1000000+1:1500000] = test['signal'][1000000:1500000-1]
     test['prev'][1500000+1:2000000] = test['signal'][1500000:2000000-1]
+    
+    train_info_dict={}
+    from collections import Counter
+    for key,value in tqdm(train_dict.items()):
+        train_info_dict[key] = Counter(value)
+    print('len(train_dict)',len(train_dict)) 
+    sns.distplot(list(train_dict.keys()))
+    plt.show()
     return train,test
