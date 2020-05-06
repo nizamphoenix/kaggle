@@ -70,3 +70,9 @@ def preproc(train,test):
     result = pd.merge(train, df_channel_probs, how='left', on=['signal','open_channels'])
     result = result.fillna(1)
     return train,test
+
+
+def get_batches(df ,batch_size):
+    df['group'] = df.groupby(df.index//batch_size, sort=False)['signal'].agg(['ngroup']).values
+    df['group'] = df['group'].astype(np.uint16)
+    return df
