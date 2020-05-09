@@ -20,3 +20,6 @@ The channels are classified broadly into 2 categories, depending on whether they
   2. Feed-forward neural network with 2 hidden layers: gives 51% accuracy.  
   3. 1D-CNN: 81% accuracy  
   4. 2 models, one for batch-5 and batch-10 and the other for batches 3,4,6,7,8,9: 86% accuracy  
+  5. 3 BiLSTMs: 92.0 accuracy  
+  
+  
