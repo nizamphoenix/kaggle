@@ -4,4 +4,4 @@ Identifying such manipulated media was the objective of this competition, hosted
 More information can be found here https://www.kaggle.com/c/deepfake-detection-challenge/leaderboard  
 
 ### Approach:-
-Google's Blazeface along with Xception was used to accomplish the task objective. Notebook is available in the repository.
+Google's Blazeface along with Xception was used to accomplish the task objective. Notebook is available in the repository, "Fa{c,k}e detector.ipynb".
