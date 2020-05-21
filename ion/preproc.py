@@ -16,6 +16,18 @@ def seed_everything(seed):
     np.random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
     tf.random.set_seed(seed)
+    
+    
+def feature_selection(df ,df_test ) :
+    df = df.replace([np.inf, -np.inf], np.nan)
+    df_test = df_test.replace([np.inf, -np.inf], np.nan)
+    for col in use_cols:
+        col_mean = pd.concat([df[col], df_test[col]], axis=0).mean()
+        df[col] = df[col].fillna(col_mean)
+        df_test[col] = df_test[col].fillna(col_mean)
+   
+    gc.collect()
+    return df, df_test, use_cols
 
 seed_everything(1)
 def preproc(train,test):
