@@ -22,6 +22,8 @@ def create_model():
         Dropout(0.50),
         Dense(32,activation="relu"),
         Dropout(0.20),
+        Dense(16,activation="relu"),
+        Dropout(0.20),
         Dense(11, activation='softmax')
     ])
         optimizer=SGD(lr=0.001, momentum=0.9, nesterov=True)
