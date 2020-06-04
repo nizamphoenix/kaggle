@@ -20,9 +20,12 @@ def create_model():
         Bidirectional(LSTM(256, return_sequences=True)),
         BatchNormalization(),
         Dropout(0.50),
+        Attention(),
         Dense(32,activation="relu"),
         Dropout(0.20),
         Dense(16,activation="relu"),
+        Dropout(0.20),
+        Dense(8,activation="relu"),
         Dropout(0.20),
         Dense(11, activation='softmax')
     ])
