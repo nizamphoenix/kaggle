@@ -1,19 +1,12 @@
 import pandas as pd
 
 def read_data():
-    train1 = pd.read_csv("/kaggle/input/jigsaw-multilingual-toxic-comment-classification/jigsaw-toxic-comment-train.csv", usecols=["comment_text", "toxic"])
-   
-
+    df_train = pd.read_csv("/kaggle/input/jigsaw-public-dataset-/train.csv", usecols=["comment_text", "toxic"])
+    df_train = df_train.sample(frac=1).reset_index(drop=True)#shuffling
     df_valid = pd.read_csv('/kaggle/input/jigsaw-multilingual-toxic-comment-classification/validation.csv')
     test = pd.read_csv('/kaggle/input/jigsaw-multilingual-toxic-comment-classification/test.csv')
     sub = pd.read_csv('/kaggle/input/jigsaw-multilingual-toxic-comment-classification/sample_submission.csv')
 
-    df_train = pd.concat([
-        train1[['comment_text', 'toxic']],
-        train2[['comment_text', 'toxic']].query('toxic==1'),
-        train2[['comment_text', 'toxic']].query('toxic==0').sample(n=99937, random_state=0),
-    ])
-    df_train = df_train.sample(frac=1).reset_index(drop=True)#shuffling
     import gc
     del train1, train2
     gc.collect(); gc.collect();
