@@ -12,7 +12,8 @@ def read_data():
     df_train = pd.concat([
         train1[['comment_text', 'toxic']],
         train2[['comment_text', 'toxic']].query('toxic==1'),
-        train2[['comment_text', 'toxic']].query('toxic==0').sample(n=99937, random_state=0),])
+        train2[['comment_text', 'toxic']].query('toxic==0').sample(n=99937, random_state=0),
+    ])
     df_train = df_train.sample(frac=1).reset_index(drop=True)#shuffling
     import gc
     del train1, train2
