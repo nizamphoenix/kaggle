@@ -12,7 +12,12 @@ from scipy import stats
 import sys
 import warnings
 warnings.filterwarnings('ignore')
+
+
 class Head(torch.nn.Module):
+    '''
+    replacing top layer
+    '''
     def __init__(self, in_f, out_f):
         super().__init__()
 
