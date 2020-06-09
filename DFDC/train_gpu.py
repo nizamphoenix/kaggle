@@ -18,8 +18,6 @@ from torch.utils.data import Dataset, DataLoader
 mean = [0.485, 0.456, 0.406]
 std = [0.229, 0.224, 0.225]
 
-
-
 from pytorchcv.model_provider import get_model
 model = get_model("xception", pretrained=True)
 #model = get_model("resnet18", pretrained=True)
