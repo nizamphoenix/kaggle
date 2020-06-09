@@ -53,21 +53,17 @@ class Head(torch.nn.Module):
         
        
     def forward(self, x):
-        x = self.f(x)#flatten
- 
+        x = self.f(x)#flatte
         x = self.b1(x)
         x = self.d1(x)
-            
         x = self.l2(x)#first hidden layer
         x = self.r2(x)
         x = self.b2(x)
         x = self.d2(x)
-        
         x = self.l3(x)#second hidden layer
         x = self.r3(x)
         x = self.b3(x)
         x = self.d3(x)
-        
         out = self.o(x)#512 dim
         return out
 
