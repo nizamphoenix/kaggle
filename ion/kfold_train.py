@@ -2,6 +2,7 @@
 def train(X_train):
     all_predictions = []
     from sklearn.model_selection import KFold
+    import tensorflow.keras.callbacks.LearningRateScheduler
     import math
     kf = KFold(n_splits=5, random_state=42, shuffle=True)
     lr_schedule = LearningRateScheduler(lambda epoch: 1e-8 * math.pow(drop, math.floor((1+epoch)/0.001)))
