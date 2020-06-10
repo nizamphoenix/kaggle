@@ -14,5 +14,5 @@ sMRI is a technique for examining the anatomy and pathology of the brain, while 
 Submissions are scored using  feature-weighted-normalized-absolute errors.  
 j--->age/domain1_var1/domain1_var2/domain2_var1/domain2_var2  (target variables)  
 i--->data instance  
-<img src="https://render.githubusercontent.com/render/math?math=y_{j_i}">$$ is ith observation of jth feauture....  
+<img src="https://render.githubusercontent.com/render/math?math=y_{j_i}">is  the 'i'th data observation of 'j'th feauture.    
 weights : [.3, .175, .175, .175, .175]  
