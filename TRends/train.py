@@ -1,5 +1,5 @@
 def cv_train_predict(df,test_df,features):
-    NUM_FOLDS = 5
+    NUM_FOLDS = 7
     kf = KFold(n_splits=NUM_FOLDS, shuffle=True, random_state=0)
     overal_score = 0
     for target, c, w in [("age", 100, 0.3), ("domain1_var1", 10, 0.175), ("domain1_var2", 10, 0.175), ("domain2_var1", 10, 0.175), ("domain2_var2", 10, 0.175)]:    
