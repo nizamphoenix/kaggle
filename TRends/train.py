@@ -1,3 +1,9 @@
+import numpy as np
+from cuml import SVR
+
+def metric(y_true, y_pred):
+    return np.mean(np.sum(np.abs(y_true - y_pred), axis=0)/np.sum(y_true, axis=0))
+
 def cv_train_predict(df,test_df,features):
     NUM_FOLDS = 7
     kf = KFold(n_splits=NUM_FOLDS, shuffle=True, random_state=0)
