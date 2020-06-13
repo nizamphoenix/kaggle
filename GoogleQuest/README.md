@@ -7,6 +7,9 @@ This competetion faciliates using modern artificial intelligence tools, like dee
 More information about competition available [here](https://www.kaggle.com/c/google-quest-challenge).  
 
 ### Approach:-  
+- Data consisted of *question title, question body, and answer body* of stackoverflow posts to predict scores of 30 variables, like *question_asker_understanding, question_expect_short_answer* etc.
 - DistilBERT was used to encode the raw text, BERTbase was overlooked dueto computational constraints.  
 - 5-fold cross-validation was used to train the network to minimise error along with MultiTasknet since it was a multi-output regression problem.  
-- Data consisted of *question title, question body, and answer body* of stackoverflow posts to predict scores of 30 variables, like *question_asker_understanding, question_expect_short_answer* etc
+- In-addition, 2 other features were stacked with BERT encodings:-  
+  - cosine distance between sentence embeddings of question body & answer body 
+  - l2-squared distance between sentence embeddings of question body & answer body  
