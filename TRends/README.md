@@ -13,7 +13,9 @@ sMRI is a technique for examining the anatomy and pathology of the brain, while 
 Submissions are scored using  feature-weighted-normalized-absolute errors given by the formula below,  
 
 <img src="https://render.githubusercontent.com/render/math?math=\text{score} = \sum_{j} w_j \left( \frac{\sum_i \text{abs}( y_{j_i} - \hat{y}_{j_i})}{\sum_i \hat{y}_{j_i}} \right)">   
-  
+
+[Here](https://github.com/nizamphoenix/kaggle/blob/master/TRends/score.py) is the code for the formula  
+
 j--->age/domain1_var1/domain1_var2/domain2_var1/domain2_var2  (target variables)  
 i--->data instance  
 <img src="https://render.githubusercontent.com/render/math?math=y_{j_i}"> is the 'i'th data observation of 'j'th feauture.    
