@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-import cudf#rapidsai--to run on GPU
+import cudf
 def get_train_test(fnc_file,loadings_file,lablels_file):
     '''
     function to get training and test data sets
@@ -18,4 +18,9 @@ def get_train_test(fnc_file,loadings_file,lablels_file):
     # Giving less importance to FNC features since they are easier to overfit due to high dimensionality.
     df[fnc_features] *= 1/600
     test_df[fnc_features] *= 1/600
+    #imputing missing values in targets
+    from sklearn.impute import KNNImputer
+    imputer = KNNImputer(n_neighbors = 5, weights="distance")
+    df = cudf.DataFrame(pd.DataFrame(imputer.fit_transform(df), columns = list(df.columns)))
+    test_df = cudf.DataFrame(test_df)#necessary for casting to gpu matrix
     return df,test_df,fnc_features, loading_features
