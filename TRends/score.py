@@ -5,7 +5,7 @@ def trends_score(y_true,y_preds):
     w = np.array([.3, .175, .175, .175, .175])#weights as dictated by competition
     return np.mean(np.matmul(np.abs(y_true-y_preds),w/np.mean(y_true,axis=0)),axis=0)
 
-
+#--individually
 def my_metric(y_true, y_pred):
     return np.mean(np.sum(np.abs(y_true - y_pred), axis=0)/np.sum(y_true, axis=0))
 age=my_metric(y_train_df[3634:]['age'],m.predict(train_df[3634:]))
@@ -15,3 +15,18 @@ d2v1=my_metric(y_train_df[3634:]['domain2_var1'],model_d2.predict(train_df[3634:
 d2v2=my_metric(y_train_df[3634:]['domain2_var2'],model_d2.predict(train_df[3634:])[:,1])
 score = 0.3*age+0.175*(d1v1+d1v2+d2v1+d2v2)
 print("Score:",score)
+
+
+#--usually used by multitakelastic to score as a callable
+def trends_scorer_multitask_scoring(estimator,X,y_true):
+    '''
+    custom scoring function used for evaluation in this competition
+    '''
+    import numpy as np
+    y_true = np.array(y_true)
+    y_preds=estimator.predict(X)
+    y_preds = np.array(y_preds)
+    w = np.array([.3, .175, .175, .175, .175])
+    op = np.mean(np.matmul(np.abs(y_true-y_preds),w/np.mean(y_true,axis=0)),axis=0)
+    print(op)
+    return op
