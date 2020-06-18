@@ -1,9 +1,10 @@
 import numpy as np
 from cuml import SVR
 from cuml import RandomForestRegressor
-from sklearn.model_selection import KFold
+from cuml import NearestNeighbors,KMeans,UMAP,Ridge,ElasticNet
 import cupy as cp
-from cuml.linear_model import Ridge, Lasso
+from sklearn.model_selection import KFold
+
 
 def my_metric(y_true, y_pred):
     return np.mean(np.sum(np.abs(y_true - y_pred), axis=0)/np.sum(y_true, axis=0))
@@ -12,10 +13,17 @@ def cv_train_predict(df,test_df,features):
     '''
     training with k-fold cross-validation
     '''
+    weights={}#Weights & other hyperparameters
+    #[target,SVR_penalty(C),score_wieght,ElasticNet_weight,RandomForest_weight]
+    weights['age']=["age",100,0.3,0.15,0.3]
+    weights['domain1_var1']=["domain1_var1",12,0.175,0.2,0.4]
+    weights['domain1_var2']=["domain1_var2", 8,0.175,0.2,0.4]
+    weights['domain2_var1']=["domain2_var1",10,0.175,0.3,0.2]
+    weights['domain2_var2']=["domain2_var2",12,0.175,0.22,0.4]
     NUM_FOLDS = 5
     kf = KFold(n_splits=NUM_FOLDS, shuffle=True, random_state=0)
     overal_score = 0
-    for target,c,w,elasn,rf in [("age", 60, 0.3, 0.55, 0.3), ("domain1_var1", 12, 0.175, 0.2, 0.7), ("domain1_var2", 8, 0.175, 0.2,0.7), ("domain2_var1", 9, 0.175, 0.22,0.7), ("domain2_var2", 12, 0.175, 0.22, 0.7)]:    
+    for target,c,w,el,rf in [weights['age'], weights['domain1_var1'], weights['domain1_var2'], weights['domain2_var1'], weights['domain2_var2']]:    
         y_oof = np.zeros(df.shape[0])
         y_test = np.zeros((test_df.shape[0], NUM_FOLDS))
 
@@ -35,22 +43,24 @@ def cv_train_predict(df,test_df,features):
             model.fit(X_train,y_train)
             model_1 = SVR(C=c, cache_size=3000.0)
             model_1.fit(train_df[features].values, train_df[target].values)
-            model_2 = ElasticNet(alpha = 1,l1_ratio=0.6)
+            model_2 = ElasticNet(alpha = 1,l1_ratio=0.2)
             model_2.fit(train_df[features].values, train_df[target].values)
             
-            val_pred   = model.predict(X_val)
+            val_pred_rf   = model.predict(X_val)
             val_pred_1 = model_1.predict(val_df[features])
             val_pred_2 = model_2.predict(val_df[features])
 
-            test_pred   = model.predict(X_test)
+            test_pred_rf   = model.predict(X_test)
             test_pred_1 = model_1.predict(test_df[features])
             test_pred_2 = model_2.predict(test_df[features])
-
-            val_pred = rf*val_pred + (1-rf)*((1-elasn)*val_pred_1+elasn*val_pred_2)
-            val_pred = cp.asnumpy(val_pred.values.flatten())
-
-            test_pred = rf*test_pred + (1-rf)*((1-elasn)*test_pred_1+elasn*test_pred_2)
-            test_pred = cp.asnumpy(test_pred.values.flatten())
+            #pred    = Blended prediction(RandomForest + Blended prediction(ElasticNet & SVR))
+            
+            
+            val_pred = rf*val_pred_rf + cp.asnumpy((1-rf)*((1-el)*val_pred_1+el*val_pred_2))
+            #val_pred = cp.asnumpy(val_pred.values.flatten())
+            
+            test_pred = rf*test_pred_rf + cp.asnumpy((1-rf)*((1-el)*test_pred_1+el*test_pred_2))
+            #test_pred = cp.asnumpy(test_pred.values.flatten())
 
             y_oof[val_ind] = val_pred
             y_test[:, f] = test_pred
