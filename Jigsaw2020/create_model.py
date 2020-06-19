@@ -36,3 +36,11 @@ def build_model(transformer, max_len):
     model = Model(inputs=input_word_ids, outputs=out)
     model.compile(Adam(lr=1e-5), loss='binary_crossentropy', metrics=['accuracy',AUC(name='auc')])
     return model
+
+
+%%time
+from transformers import TFAutoModel
+with strategy.scope():
+    transformer_layer = TFAutoModel.from_pretrained('jplu/tf-xlm-roberta-base')
+    model = build_model(transformer_layer, max_len=MAX_LEN)
+model.summary()
