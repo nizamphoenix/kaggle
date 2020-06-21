@@ -26,7 +26,9 @@ def build_model(transformer, max_len):
 
 %%time
 from transformers import TFAutoModel
+from transformers import TFAutoModelForSequenceClassification
 with strategy.scope():
     transformer_layer = TFAutoModel.from_pretrained('jplu/tf-xlm-roberta-base')
+    transformer_layer = TFAutoModelForSequenceClassification.from_pretrained('jplu/tf-xlm-roberta-base')
     model = build_model(transformer_layer, max_len=MAX_LEN)
 model.summary()
