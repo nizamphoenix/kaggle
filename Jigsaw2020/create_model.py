@@ -32,3 +32,17 @@ with strategy.scope():
     transformer_layer = TFAutoModelForSequenceClassification.from_pretrained('jplu/tf-xlm-roberta-base')
     model = build_model(transformer_layer, max_len=MAX_LEN)
 model.summary()
+
+
+
+# def build_model_working(transformer, max_len):
+#     """
+#     from transformers import TFAutoModelForSequenceClassification
+#     transformer = TFAutoModelForSequenceClassification.from_pretrained('jplu/tf-xlm-roberta-base')
+#     """
+#     input_word_ids = Input(shape=(max_len,), dtype=tf.int32, name="input_word_ids")
+#     sequence_output = transformer(input_word_ids)[0]
+#     out = Dense(1, activation='sigmoid')(sequence_output)
+#     model = Model(inputs=input_word_ids, outputs=out)
+#     model.compile(Adam(lr=1e-3), loss='binary_crossentropy', metrics=['accuracy',AUC(name='auc')])
+#     return model
