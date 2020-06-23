@@ -4,6 +4,57 @@ from fastai2.basics import *
 from fastai2.tabular.all import *
 from fast_tabnet.core import *
 
+
+# Loading 
+
+from sklearn.model_selection import KFold, train_test_split
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from tqdm.notebook import tqdm
+import gc
+
+
+import lightgbm as lgb
+
+
+#preparing data
+fnc_df = pd.read_csv("../input/trends-assessment-prediction/fnc.csv")
+loading_df = pd.read_csv("../input/trends-assessment-prediction/loading.csv")
+labels_df = pd.read_csv("../input/trends-assessment-prediction/train_scores.csv")
+
+fnc_features, loading_features = list(fnc_df.columns[1:]), list(loading_df.columns[1:])
+df = fnc_df.merge(loading_df, on="Id")
+labels_df["is_train"] = True
+
+df = df.merge(labels_df, on="Id", how="left")
+
+target_cols = ['age', 'domain1_var1', 'domain1_var2', 'domain2_var1', 'domain2_var2']
+
+#imputing missing values in targets
+from sklearn.impute import KNNImputer
+imputer = KNNImputer(n_neighbors = 5, weights="distance")
+df[target_cols] = pd.DataFrame(imputer.fit_transform(df[target_cols]), columns = target_cols)
+
+test_df = df[df["is_train"] != True].copy()
+train_df = df[df["is_train"] == True].copy()
+
+#y_train_df = train_df[target_cols]
+train_df = train_df.drop(['is_train','Id'], axis=1)
+#train_df = train_df.drop(target_cols + ['is_train'], axis=1)
+test_df = test_df.drop([target_cols,'is_train','Id'], axis=1)
+
+FNC_SCALE = 1/500
+test_df[fnc_features] *= FNC_SCALE
+train_df[fnc_features] *= FNC_SCALE
+train_df.shape,test_df.shape
+
+
+
+
+
 #using fastai's tabnet with GPU
 
 targets=['age','domain1_var1','domain1_var2', 'domain2_var1','domain2_var2']
