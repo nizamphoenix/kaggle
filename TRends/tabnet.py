@@ -78,3 +78,14 @@ learn.fit_one_cycle(n_epoch=100, cbs=cb)
 learn.load('model')
 tst_dl = dls.valid.new(to_tst)
 tst_dl.show_batch()
+
+
+#Predictions
+learn.metrics = []
+tst_preds,_ = learn.get_preds(dl=tst_dl)
+res = pd.DataFrame(np.array(tst_preds),columns=[targets])
+ids=pd.DataFrame(test_df.Id.values,columns=['Id'])
+a=pd.concat([ids,res],axis=1)
+b=a.iloc[:,0:6]
+b.columns=['Id','age','domain1_var1','domain1_var2', 'domain2_var1','domain2_var2']
+b.head()
