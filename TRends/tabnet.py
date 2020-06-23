@@ -69,3 +69,12 @@ model=TabNetModel(
 )
 opt_func = partial(Adam, wd=0.01, eps=1e-5)
 learn = Learner(dls, model, loss_func=MSELossFlat(), opt_func=opt_func, lr=3e-2, metrics=[trends_scorer_multitask_scoring_gpu])
+
+
+#Training
+learn.lr_find()
+cb = SaveModelCallback()
+learn.fit_one_cycle(n_epoch=100, cbs=cb)
+learn.load('model')
+tst_dl = dls.valid.new(to_tst)
+tst_dl.show_batch()
