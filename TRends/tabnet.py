@@ -30,3 +30,42 @@ to = TabularPandas(
 )
 dls = to.dataloaders(bs=512, path=path)
 dls.show_batch()
+
+to_tst = to.new(test_df)
+to_tst.process()
+to_tst.all_cols.head()
+emb_szs = get_emb_sz(to)
+print(emb_szs)
+
+def trends_scorer_multitask_scoring_gpu(y_true,y_preds):
+    '''
+    custom scoring function used for evaluation in this competition
+    '''
+    import numpy as np
+    y_true = y_true.cpu().detach().numpy()
+    y_preds= y_preds.cpu().detach().numpy()
+    w = np.array([.3, .175, .175, .175, .175])
+    op = np.mean(np.matmul(np.abs(y_true-y_preds),w/np.mean(y_true,axis=0)),axis=0)
+    return op
+
+
+from fastai2.layers import L1LossFlat,MSELossFlat
+from fastai2.metrics import mae
+model=TabNetModel(
+    emb_szs,
+    n_cont=len(features),
+    out_sz=5,#Number of outputs we expect from our network - in this case 2.
+    embed_p=0.0,
+    y_range=None,
+    n_d=8,
+    n_a=8,
+    n_steps=3,
+    gamma=1.5,
+    n_independent=2,
+    n_shared=2,
+    epsilon=1e-15,
+    virtual_batch_size=128,
+    momentum=0.02,
+)
+opt_func = partial(Adam, wd=0.01, eps=1e-5)
+learn = Learner(dls, model, loss_func=MSELossFlat(), opt_func=opt_func, lr=3e-2, metrics=[trends_scorer_multitask_scoring_gpu])
