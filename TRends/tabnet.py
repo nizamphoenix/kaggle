@@ -89,3 +89,11 @@ a=pd.concat([ids,res],axis=1)
 b=a.iloc[:,0:6]
 b.columns=['Id','age','domain1_var1','domain1_var2', 'domain2_var1','domain2_var2']
 b.head()
+
+#Writing to submission.csv file
+output = b #
+sub_df = pd.melt(output[["Id", "age", "domain1_var1", "domain1_var2", "domain2_var1", "domain2_var2"]], id_vars=["Id"], value_name="Predicted")
+sub_df["Id"] = sub_df["Id"].astype("str") + "_" +  sub_df["variable"].astype("str")
+sub_df = sub_df.drop("variable", axis=1).sort_values("Id")
+assert sub_df.shape[0] == test_df.shape[0]*5
+sub_df.head(10)
