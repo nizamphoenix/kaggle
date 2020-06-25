@@ -16,6 +16,25 @@ class MSEMAELOSS(torch.nn.Module):
     def forward(self,y, y_hat):
         loss = (1-self.l1)*MSELossFlat()(y, y_hat) + self.l1*L1LossFlat()(y, y_hat)
         return loss
+
+    
+class RegressLoss_GPU(torch.nn.Module):
+    '''
+    Competition metric turned into loss! 
+    For use with GPU only
+    '''
+    def __init__(self):
+        super().__init__()
+        
+    def forward(self,y_true,y_preds):
+        import numpy as np
+        y_true = y_true.cpu().detach().numpy()
+        y_preds= y_preds.cpu().detach().numpy()
+        w = np.array([.3, .175, .175, .175, .175])
+        op = np.mean(np.matmul(np.abs(y_true-y_preds),w/np.mean(y_true,axis=0)),axis=0)
+        return torch.scalar_tensor(op,requires_grad=True)
+    
+    
     
 class Regress_Loss(torch.nn.Module):
     
