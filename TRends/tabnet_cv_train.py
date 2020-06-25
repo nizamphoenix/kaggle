@@ -1,6 +1,6 @@
 from sklearn.model_selection import KFold
-from import get_model
-from import get_tabnet_data
+from tabnet_model import get_model
+from tabnet_data import get_tabnet_data
 from losses import SmoothMaeLoss,MSEMaeLoss
 
 NUM_FOLDS = 7
