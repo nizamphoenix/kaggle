@@ -1,10 +1,25 @@
 import torch.nn
 import numpy as np
-
-
+from fastai2.layers import L1LossFlat,MSELossFlat
 from torch.nn import SmoothL1Loss
+
+
+
+class SmoothMaeLoss(torch.nn.Module):
+    '''
+    For use with GPU only
+    SmoothL1Loss(HuberLoss)*(1-x) + MAELOSS*x
+    '''
+    def __init__(self,l1):
+        super().__init__()
+        self.l1=l1
+        
+    def forward(self,y, y_hat):
+        loss = (1-self.l1)*SmoothL1Loss()(y, y_hat) + self.l1*L1LossFlat()(y, y_hat)
+        return loss
+    
+    
 class MSEMAELOSS(torch.nn.Module):
-    from fastai2.layers import L1LossFlat,MSELossFlat
     '''
     For use with GPU only
     MSELOSS*(1-x) + MAELOSS*x
