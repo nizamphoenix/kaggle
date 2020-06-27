@@ -17,10 +17,6 @@ from tqdm.notebook import tqdm
 import gc
 
 
-import lightgbm as lgb
-
-
-#preparing data
 fnc_df = pd.read_csv("../input/trends-assessment-prediction/fnc.csv")
 loading_df = pd.read_csv("../input/trends-assessment-prediction/loading.csv")
 labels_df = pd.read_csv("../input/trends-assessment-prediction/train_scores.csv")
@@ -42,15 +38,29 @@ test_df = df[df["is_train"] != True].copy()
 train_df = df[df["is_train"] == True].copy()
 
 #y_train_df = train_df[target_cols]
-train_df = train_df.drop(['is_train','Id'], axis=1)
+train_df = train_df.drop(['is_train'], axis=1)
 #train_df = train_df.drop(target_cols + ['is_train'], axis=1)
-test_df = test_df.drop([target_cols,'is_train','Id'], axis=1)
+test_df = test_df.drop(target_cols+['is_train'], axis=1)
 
-FNC_SCALE = 1/500
-test_df[fnc_features] *= FNC_SCALE
-train_df[fnc_features] *= FNC_SCALE
-train_df.shape,test_df.shape
+#------feature transformations------
+train_df[features]=train_df[features].pow(2)
+train_df[fnc_features]=train_df[fnc_features].mul(1/100)
+train_df[fnc_features]=train_df[fnc_features].pow(2)
 
+test_df[features]=test_df[features].pow(2)
+test_df[fnc_features]=test_df[fnc_features].mul(1/100)
+test_df[fnc_features]=test_df[fnc_features].pow(2)
+#-------------------------------------
+targets=['age','domain1_var1','domain1_var2', 'domain2_var1','domain2_var2']
+features=list(set(train_df.columns)-set(targets)-set(['Id']))
+#-------Normalization
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+train_df[features] = scaler.fit_transform(train_df[features],train_df[targets])
+test_df[features] = scaler.transform(test_df[features])
+#------------------------------
+print(train_df.shape,test_df.shape)
+print("Train and test dataframes contain Id columns,too!!")
 
 
 
