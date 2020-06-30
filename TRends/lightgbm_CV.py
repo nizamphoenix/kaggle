@@ -1,6 +1,88 @@
 # LightGBM--Cross Validation implementation
+params={
+            'age':{
+         'num_leaves': 100,
+         'feature_fraction': 0.90,
+         'bagging_fraction': 1.0,
+         'bagging_freq': 0,
+         'min_child_samples': 30,
+         'objective': 'rmse',
+         'subsample': 0.7678,
+            'subsample_freq': 1,
+            'max_depth': 50,
+            'lambda_l1': 0,  
+            'lambda_l2': 10,
+         'metric': 'l1',
+         'boosting_type': 'gbdt',
+         'learning_rate': 0.003,
+         'tree_learner': 'feature_parallel',
+         'num_threads': 4,
+         'seed': 0}
+        ,
 
-from sklearn.model_selection import KFold, train_test_split
+        'domain1_var1':{'lambda_l1': 0.0,
+     'lambda_l2': 0.0,
+     'num_leaves': 30,
+     'feature_fraction': 0.95,
+     'bagging_fraction': 0.9765733975192812,
+     'bagging_freq': 1,
+     'min_child_samples': 10,
+     'objective': 'huber',
+     'metric': 'l1',
+     'boosting_type': 'gbdt',
+     'learning_rate': 0.003,
+     'tree_learner': 'feature_parallel',
+     'num_threads': 4,
+     'seed': 0}  
+        ,
+        'domain1_var2':{'lambda_l1': 7.733581684659643e-05,
+     'lambda_l2': 1.1878841440097718,
+     'num_leaves': 31,
+     'feature_fraction': 1.0,
+     'bagging_fraction': 1.0,
+     'bagging_freq': 0,
+     'min_child_samples': 25,
+     'objective': 'huber',
+     'metric': 'l1',
+     'boosting_type': 'gbdt',
+     'learning_rate': 0.003,
+     'tree_learner': 'feature_parallel',
+     'num_threads': 4,
+     'seed': 0}
+        ,
+        'domain2_var1':{'lambda_l1': 1,
+     'lambda_l2': 2,
+     'num_leaves': 105,
+     'feature_fraction': 0.9,
+     'bagging_fraction': 0.8,
+     'bagging_freq': 4,
+     'min_child_samples': 10,
+     'objective': 'huber',
+     'metric': 'l1',
+     'boosting_type': 'gbdt',
+     'learning_rate': 0.003,
+     'max_depth': -1,
+     'tree_learner': 'feature_parallel',
+     'num_threads': 4,
+     'seed': 0}
+        ,
+        'domain2_var2':{'lambda_l1': 1,
+     'lambda_l2': 2,
+     'num_leaves': 80,
+     'feature_fraction': 1.0,
+     'bagging_fraction': 1.0,
+     'bagging_freq': 0,
+     'min_child_samples': 20,
+     'objective': 'huber',
+     'metric': 'l1',
+     'boosting_type': 'gbdt',
+     'learning_rate': 0.003,
+     'max_depth': -1,
+     'tree_learner': 'feature_parallel',
+     'num_threads': 4,
+     'seed': 0}
+    }
+from sklearn.model_selection import KFold
 
 import numpy as np
 import pandas as pd
@@ -12,7 +94,6 @@ import gc
 import lightgbm as lgb
 
 
-from tensorflow.keras.utils import Sequence
 fnc_df = pd.read_csv("../input/trends-assessment-prediction/fnc.csv")
 loading_df = pd.read_csv("../input/trends-assessment-prediction/loading.csv")
 labels_df = pd.read_csv("../input/trends-assessment-prediction/train_scores.csv")
@@ -26,49 +107,58 @@ df = df.merge(labels_df, on="Id", how="left")
 target_cols = ['age', 'domain1_var1', 'domain1_var2', 'domain2_var1', 'domain2_var2']
 
 #imputing missing values in targets
-from sklearn.impute import KNNImputer
-imputer = KNNImputer(n_neighbors = 5, weights="distance")
-df[target_cols] = pd.DataFrame(imputer.fit_transform(df[target_cols]), columns = target_cols)
+# from sklearn.impute import KNNImputer
+# imputer = KNNImputer(n_neighbors = 5, weights="distance")
+# df[target_cols] = pd.DataFrame(imputer.fit_transform(df[target_cols]), columns = target_cols)
 
 test_df = df[df["is_train"] != True].copy()
 train_df = df[df["is_train"] == True].copy()
 
-#y_train_df = train_df[target_cols]
 train_df = train_df.drop(['is_train'], axis=1)
-#train_df = train_df.drop(target_cols + ['is_train'], axis=1)
 test_df = test_df.drop(target_cols+['is_train'], axis=1)
 
-FNC_SCALE = 1/500
-test_df[fnc_features] *= FNC_SCALE
-train_df[fnc_features] *= FNC_SCALE
+
+targets=['age','domain1_var1','domain1_var2', 'domain2_var1','domain2_var2']
+features=list(set(train_df.columns)-set(targets)-set(['Id']))
+
+
+train_df[fnc_features]=train_df[fnc_features].mul(1/600)
+#train_df[fnc_features]=train_df[fnc_features].pow(2)
+
+test_df[fnc_features]=test_df[fnc_features].mul(1/600)
+#test_df[fnc_features]=test_df[fnc_features].pow(2)
+
+
+
+
+#-------Normalizing------------------------
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+train_df[features] = scaler.fit_transform(train_df[features],train_df[targets])
+test_df[features] = scaler.transform(test_df[features])
+#----------------------------------------------------
+to_drop=['IC_20',
+         'IC_02',
+         'IC_05',
+         'IC_16',
+         'IC_10',
+         'IC_18'
+        ]
+# train_df = train_df.drop(to_drop, axis=1)
+# test_df = test_df.drop(to_drop, axis=1)
 print(train_df.shape,test_df.shape)
-print("Train and test dataframes contain Id columns,too!!")
+print("Train and test dataframes contain Id column!!")
 
 
 def my_metric(y_true, y_pred):
     return np.mean(np.sum(np.abs(y_true - y_pred), axis=0)/np.sum(y_true, axis=0))
-
-params = {'lambda_l1': 2.7318340828772203e-05,
- 'lambda_l2': 0.04505123541570556,
- 'num_leaves': 77,
- 'feature_fraction': 0.8999999999999999,
- 'bagging_fraction': 0.9508895705450257,
- 'bagging_freq': 5,
- 'min_child_samples': 20,
- 'objective': 'gamma',
- 'metric': 'l1',
- 'boosting_type': 'gbdt',
- 'learning_rate': 0.01,
- 'max_depth': -1,
- 'num_threads': 8,
- 'seed': 0}
 
 
 NFOLDS = 7
 from sklearn.model_selection import KFold
 kf = KFold(n_splits=NFOLDS, shuffle=True, random_state=0)
 
-targets=['age','domain1_var1','domain1_var2', 'domain2_var1','domain2_var2']
+targets=['age','domain2_var1','domain2_var2', 'domain1_var1','domain1_var2']
 features=list(set(train_df.columns)-set(targets)-set(['Id']))
 overal_score = 0.0
 for target,w in tqdm([('age',0.3),('domain1_var1',0.175),('domain1_var2',0.175),('domain2_var1',0.175),('domain2_var2',0.175)]):
@@ -85,13 +175,12 @@ for target,w in tqdm([('age',0.3),('domain1_var1',0.175),('domain1_var2',0.175),
         train_data = lgb.Dataset(X_train, label=y_train)
         val_data = lgb.Dataset(X_val, label=y_val)
         #create model
-        model = lgb.train(params, 
+        model = lgb.train(params[target], 
                           train_data, 
-                          num_boost_round=100, 
-                          early_stopping_rounds=20, 
-                          valid_sets=[val_data], 
-                          learning_rates=lambda iter: 0.05 * (0.99 ** iter),
-                          verbose_eval=10)
+                          num_boost_round=10000, 
+                          early_stopping_rounds=60, 
+                          valid_sets=[train_data,val_data], 
+                          verbose_eval=50)
     
         val_pred = model.predict(X_val)
         test_pred = model.predict(test_df[features])
@@ -103,7 +192,7 @@ for target,w in tqdm([('age',0.3),('domain1_var1',0.175),('domain1_var2',0.175),
 
     score = my_metric(train_df[train_df[target].notnull()][target].values, train_df[train_df[target].notnull()]["pred_{}".format(target)].values)
     print("="*20,target, np.round(score, 5))
-    print()
+    print("-"*100)
     overal_score += w*score
         
 print("Overal score:", np.round(overal_score, 5))
