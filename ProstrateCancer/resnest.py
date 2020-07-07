@@ -1,4 +1,26 @@
+class MultiTaskLossWrapper(nn.Module):
+    def __init__(self, task_num):
+        super(MultiTaskLossWrapper, self).__init__()
+        self.task_num = task_num
+        self.log_vars = nn.Parameter(torch.zeros((task_num)))
 
+    def forward(self, preds, gleason):
+        print(type(preds),len(preds),preds[0].shape,preds[1].shape,type(gleason),gleason.shape)
+
+        crossEntropy = CrossEntropyFlat()
+        
+        loss1 = crossEntropy(preds[0],prim_gleason)
+        loss2 = crossEntropy(preds[1],sec_gleason)
+
+    
+        precision1 = torch.exp(-self.log_vars[0])
+        loss1 = precision1*loss1 + self.log_vars[0]
+
+        precision2 = torch.exp(-self.log_vars[1])
+        loss2 = precision2*loss2 + self.log_vars[1]
+        
+        return loss1+loss2
+    a
 class GleasonModel(nn.Module):
     def __init__(self, arch='resnext50_32x4d_ssl', n=4, pre=True):
         super().__init__()
