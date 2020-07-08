@@ -48,21 +48,7 @@ class RegressLoss_GPU(torch.nn.Module):
         w = np.array([.3, .175, .175, .175, .175])
         op = np.mean(np.matmul(np.abs(y_true-y_preds),w/np.mean(y_true,axis=0)),axis=0)
         return torch.scalar_tensor(op,requires_grad=True)
-    
-    
-    
-class Regress_Loss(torch.nn.Module):
-    
-    def __init__(self):
-        super(Regress_Loss,self).__init__()
-        
-    def forward(self,x,y):
-        y_shape = y.size()[1]
-        x_added_dim = x.unsqueeze(1)
-        x_stacked_along_dimension1 = x_added_dim.repeat(1,NUM_WORDS,1)
-        diff = torch.sum((y - x_stacked_along_dimension1)**2,2)
-        totloss = torch.sum(torch.sum(torch.sum(diff)))
-        return totloss
+   
     
 class GammaLoss(torch.nn.Module):
     def __init__(self):
