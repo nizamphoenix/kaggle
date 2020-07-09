@@ -2,7 +2,24 @@ import fastai
 from fastai.vision import *
 from fastai.callbacks import SaveModelCallback
 
-
+def get_isup_preds_targs(preds,target):
+    lookup_map = {(0,0):0,(1,1):1,(1,2):2,(2,1):3,(2,2):4,(3,1):4,(1,3):4,(2,3):5,(3,2):5,(3,3):5}
+    prim_preds = preds[0].argmax(-1).view(-1,1)
+    sec_preds  = preds[1].argmax(-1).view(-1,1)
+    temp_preds = torch.cat([prim_preds,sec_preds],dim=1)
+    temp = []
+    for i in np.array(temp_preds.cpu()):
+        try:
+            temp.append(lookup_map[tuple(i)])
+        except KeyError:
+            print(tuple(i)," missins")
+            temp.append(2)
+    isup_preds = torch.tensor(temp,dtype=torch.long,device='cpu')
+    temp = []
+    for i in np.array(target.cpu()):
+        temp.append(lookup_map[tuple(i)])
+    isup_targs = torch.tensor(temp,dtype=torch.long,device='cpu')    
+    return isup_preds,isup_targsa
 
 class ConfusionMatrix(Callback):
     "Computes the confusion matrix."
