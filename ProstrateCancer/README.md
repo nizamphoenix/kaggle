@@ -1,6 +1,8 @@
 This [challenge](https://www.kaggle.com/c/prostate-cancer-grade-assessment) is about identifying cancerous tissues from benign ones and rate its severity(0 to 6), indicating severity of prostrate cancer. This challenge is conducted to push the frontiers of application of deep learning and image processing methods to histopathology.  
 
-![ALT afdadf]{aadf}(./pandas.png)
+![image](./pandas.png)  
+
+                                                           [image source](https://www.kaggle.com/c/prostate-cancer-grade-assessment)
 
 ### Approach:-  
 
