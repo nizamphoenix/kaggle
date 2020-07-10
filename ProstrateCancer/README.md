@@ -5,7 +5,7 @@ This [challenge](https://www.kaggle.com/c/prostate-cancer-grade-assessment) is a
 
 ### Approach:-  
 
-The images provided are Whole Slide Images(WSI), high resolution images and thus cannot be directly processed by deep learning algorithms. Thus, a [technique](https://developer.ibm.com/technologies/data-science/articles/an-automatic-method-to-identify-tissues-from-big-whole-slide-images-pt1/) which has produced promising results over recent advancements in preprocessing the WSI images was used, which divides the entire image over a grid, generating tiles of the image, and then intelligently selects a few tiles based on how important each tile would be in determining the result. Moreover, all tiles are labelled with the label from the original WSI image, and then later fed to algorithms.  
+The images provided are Whole Slide Images(WSI), high resolution images and thus cannot be directly processed by deep learning algorithms. Thus, a [technique](https://developer.ibm.com/technologies/data-science/articles/an-automatic-method-to-identify-tissues-from-big-whole-slide-images-pt1/) which has produced promising results over recent advancements in preprocessing the WSI images was used, which divides the entire image over a grid, generating tiles of the image, and then intelligently selects a few tiles based on how important each tile would be in determining the result. Efficiently sampling informative and representative patches is critical to achieving good performance. Moreover, all tiles are labelled with the label from the original WSI image, and then later fed to algorithms.  
 
 
 
