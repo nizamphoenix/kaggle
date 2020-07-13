@@ -152,3 +152,36 @@ class PandaDataset(Dataset):
     print("count={0},errors={1}".format(count,errors),",correct=",count-errors)
     isup_preds = torch.tensor(temp,dtype=torch.long,device='cpu')
     return isup_preds
+
+
+
+sub_df = pd.read_csv(SAMPLE)
+lookup_map  = {(0,0):0,(1,1):1,(1,2):2,(2,1):3,(2,2):4,(3,1):4,(1,3):4,(2,3):5,(3,2):5,(3,3):5}
+lookup_map2 = {(0,1):1,(0,2):1,(0,3):2,(1,0):1,(2,0):3,(3,0):4}
+if os.path.exists(DATA):
+    print("Predicting....")
+    ds = PandaDataset(DATA,TEST)
+    dl = DataLoader(ds, batch_size=bs, num_workers=nworkers, shuffle=False)
+    names,preds = [],[]
+    with torch.no_grad():
+        for imgs,filenames in tqdm(dl):
+            imgs = imgs.cuda()
+            #dihedral TTA
+            imgs = torch.stack([imgs,imgs.flip(-1),imgs.flip(-2),imgs.flip(-1,-2),
+                         imgs.transpose(-1,-2),imgs.transpose(-1,-2).flip(-1),
+                        imgs.transpose(-1,-2).flip(-2),imgs.transpose(-1,-2).flip(-1,-2)],dim=1)
+            imgs = imgs.view(-1,N,3,sz,sz)
+        
+            all_preds = [model(imgs) for model in models]
+            p=get_isup_preds(all_preds)#for 2(bs) images only
+            
+            names.append(filenames)
+            preds.append(p)
+    names = np.concatenate(names)
+    preds = torch.cat(preds).numpy()
+    sub_df = pd.DataFrame({'image_id': names, 'isup_grade': preds})
+    sub_df.to_csv('submission.csv', index=False)
+    sub_df.head()
+    
+sub_df.to_csv("submission.csv", index=False)
+sub_df.head()
