@@ -20,7 +20,7 @@ class SEResNext50_32x4d(nn.Module):
         out = self.out(x)
         return out
 
-  def run(fold):
+def run(fold):
     training_data_path = ""
     df = pd.read_csv("train_folds.csv")
     device = "cuda"
@@ -41,6 +41,6 @@ class SEResNext50_32x4d(nn.Module):
         albumenations.Normalize(mean,std,max_pixel_value=255.0,always_apply=True)
         ]
     )
-    
+
     
     
