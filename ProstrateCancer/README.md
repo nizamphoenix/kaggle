@@ -9,3 +9,11 @@ The images provided are Whole Slide Images(WSI), high resolution images and thus
 
 
 
+
+
+
+- [x] 'facebookresearch/semi-supervised-ImageNet1K-models',model='resnext50_32x4d_ssl'--------0.45 kappa score  
+- [x] 'zhanghang1989/ResNeSt', model='resnest50'                                      --------0.60 kappa score  
+- [x] Se_Resnext_50_4-32                                                              --------
+
+
