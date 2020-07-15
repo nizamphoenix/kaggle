@@ -28,5 +28,9 @@ Thereafter with further sophisticated analysis, about 5 features were dropped wh
 
 - RapidsAI  
 Since data is high dimensional(1405 features), computations demanded more power, hence Rapids AI library by Nvidia was used to build regression models
-with custom loss and metrics as provided by the competition hosts.  Each one of the 5 targets were modelled separately with Support vector regression, Elastic net and Random forest regressor and the final predictions were blended to produce the final result.  
+with custom loss and metrics as provided by the competition hosts.  Each one of the 5 targets were modelled separately with Support vector regression, Elastic net and Random forest regressor and the final predictions were blended to produce the final result.   
+There was about 0.1 of a difference between CV score and leaderboard score.  
+
+- LightGBM  
+
 
