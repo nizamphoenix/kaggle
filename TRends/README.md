@@ -22,7 +22,10 @@ i--->data instance
 weights : [.3, .175, .175, .175, .175]  
 
 #### Approach:
-I utilised only the tabular data and did not utilise the 3d-images provided. With just the tabular data, which is high-dimensional, it was treated as a predective modelling problem.  
+I utilised only the tabular data and did not utilise the 3d-images provided. With just the tabular data, which is high-dimensional, it was treated as a predective modelling problem. Also, the train and test data were not iid; since it is a prerequisite to ensure independence amongst the data points *adversarial validation* was performed to figure out the features that were causing trouble, thereafter with further sophisticated analysis, about 5 features were dropped which would reduce the dependebility among data points while giving good results.   
+This interdependence was figured out by building a robust classifier with training data tagged as 0 and the test data being tagged as 1, and calculating the AUC score. 
+*Higher AUC score indicates more interdependence*, lower AUC score is desired.  
 - RapidsAI  
 Since data is high dimensional(1405 features), computations demanded more power, hence Rapids AI library by Nvidia was used to build regression models
-with custom loss and metrics as provided by the competition hosts.  
+with custom loss and metrics as provided by the competition hosts.  Each one of the 5 targets were modelled separately with Support vector regression, Elastic net and Random forest regressor and the final predictions were blended to produce the final result.  
+
