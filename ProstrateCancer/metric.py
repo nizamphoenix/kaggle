@@ -82,3 +82,39 @@ class KappaScore(ConfusionMatrix):
         else: raise ValueError('Unknown weights. Expected None, "linear", or "quadratic".')
         k = torch.sum(w * self.cm) / torch.sum(w * expected)
         return add_metrics(last_metrics, 1-k)
+    
+    
+    
+def get_isup_preds_targs_3targets(preds,targs):
+    #predictions
+    prim_preds = preds[0].argmax(-1).view(-1,1)
+    sec_preds  = preds[1].argmax(-1).view(-1,1)
+    temp_preds = np.array(torch.cat([prim_preds,sec_preds],dim=1).cpu())#converting to np.array for tuple()
+    isup_preds = preds[2].argmax(-1).view(-1).cpu()
+    #targets
+    target = np.array(targs.cpu())#converting to np.array to cast to tuple()
+    gleason_target = target[:,0:2]
+    isup_target = target[:,2]
+    
+    lookup_map = {(0,0):0,(1,1):1,(1,2):2,(2,1):3,(2,2):4,(3,1):4,(1,3):4,(2,3):5,(3,2):5,(3,3):5}
+    temp1 = []#for predictions
+    temp2 = []#for targets
+    count = 0
+    errors = 0
+    for i in range(len(temp_preds)):
+        temp1.append(isup_preds[i])
+        temp2.append(isup_target[i])
+        print('target={0},prediction={1}'.format(isup_target[i],isup_preds[i]))
+#         count+=1
+#         try:
+#             temp1.append(lookup_map[tuple(temp_preds[i])])
+#             temp2.append(lookup_map[tuple(gleason_target[i])])
+#         except KeyError:
+#             print(tuple(temp_preds[i])," is missing!",isup_preds[i],isup_target[i])
+#             errors+=1
+#             temp1.append(isup_preds[i])
+#             temp2.append(isup_target[i])
+    print("count={0},errors={1}".format(count,errors),"correct=",count-errors)
+    final_preds = torch.tensor(temp1,dtype=torch.long,device='cpu')
+    final_targs = torch.tensor(temp2,dtype=torch.long,device='cpu')    
+    return final_preds,final_targs
