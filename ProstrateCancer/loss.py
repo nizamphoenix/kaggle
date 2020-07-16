@@ -26,3 +26,38 @@ class MultiTaskGleasonLoss(nn.Module):
         loss2 = precision2*loss2 + self.log_vars[1]   
         
         return loss1+loss2
+
+    
+    
+
+
+
+class TriTaskGleasonLoss(nn.Module):
+    def __init__(self, task_num):
+        super(TriTaskGleasonLoss, self).__init__()
+        self.task_num = task_num
+        self.log_vars = nn.Parameter(torch.zeros((task_num)))
+
+    def forward(self, preds, targets):
+#         print("type(preds):",type(preds),"| len(preds):",len(preds),"| preds[0].shape:",preds[0].shape,"| preds[1].shape:",preds[1].shape,"| preds[2].shape:",preds[2].shape)
+#         print("type(targets):",type(targets),"| targets[:,0].shape:",targets[:,0].shape,"| targets[:,1].shape:",targets[:,1].shape,"| targets[:,2].shape:",targets[:,2].shape)
+        crossEntropy = nn.CrossEntropyLoss()
+        prim_preds  = preds[0]
+        prim_target = targets[:,0].long()
+        loss0 = crossEntropy(prim_preds,prim_target)
+        precision0 = torch.exp(-self.log_vars[0])
+        loss0 = precision0*loss0 + self.log_vars[0]   
+        
+        sec_preds  = preds[1]
+        sec_target = targets[:,1].long()
+        loss1 = crossEntropy(sec_preds,sec_target)
+        precision1 = torch.exp(-self.log_vars[1])
+        loss1 = precision1*loss1 + self.log_vars[1]   
+        
+        isup_preds  = preds[2]
+        isup_target = targets[:,2].long()
+        loss2 = crossEntropy(isup_preds,isup_target)
+        precision2 = torch.exp(-self.log_vars[2])
+        loss2 = precision2*loss2 + self.log_vars[2]   
+        
+        return loss0+loss1+loss2
