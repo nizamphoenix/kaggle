@@ -52,10 +52,9 @@ class KappaScore(ConfusionMatrix):
     weights:Optional[str]=None      # None, `linear`, or `quadratic`
         
     def on_batch_end(self, last_output:Tensor, last_target:Tensor, **kwargs):
-#         print("Customised scoring function....")
-#         print(last_output[0].shape,last_output[1].shape,last_target.shape)
-#         print(last_output)
-#         print(last_target)
+        '''
+        customised scoring function
+        '''
         preds,targs = get_isup_preds_targs(last_output,last_target)#convert gleasons-->isup for evaluatio
 
         if self.n_classes == 0:
@@ -86,6 +85,9 @@ class KappaScore(ConfusionMatrix):
     
     
 def get_isup_preds_targs_3targets(preds,targs):
+    '''
+    metric function for 3 targets: gleason scores and isup
+    '''
     #predictions
     prim_preds = preds[0].argmax(-1).view(-1,1)
     sec_preds  = preds[1].argmax(-1).view(-1,1)
@@ -102,18 +104,15 @@ def get_isup_preds_targs_3targets(preds,targs):
     count = 0
     errors = 0
     for i in range(len(temp_preds)):
-        temp1.append(isup_preds[i])
-        temp2.append(isup_target[i])
-        print('target={0},prediction={1}'.format(isup_target[i],isup_preds[i]))
-#         count+=1
-#         try:
-#             temp1.append(lookup_map[tuple(temp_preds[i])])
-#             temp2.append(lookup_map[tuple(gleason_target[i])])
-#         except KeyError:
-#             print(tuple(temp_preds[i])," is missing!",isup_preds[i],isup_target[i])
-#             errors+=1
-#             temp1.append(isup_preds[i])
-#             temp2.append(isup_target[i])
+        count+=1
+        try:
+            temp1.append(lookup_map[tuple(temp_preds[i])])
+            temp2.append(lookup_map[tuple(gleason_target[i])])
+        except KeyError:
+            print(tuple(temp_preds[i])," is missing!",isup_preds[i],isup_target[i])
+            errors+=1
+            temp1.append(isup_preds[i])
+            temp2.append(isup_target[i])
     print("count={0},errors={1}".format(count,errors),"correct=",count-errors)
     final_preds = torch.tensor(temp1,dtype=torch.long,device='cpu')
     final_targs = torch.tensor(temp2,dtype=torch.long,device='cpu')    
