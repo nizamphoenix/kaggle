@@ -1,4 +1,4 @@
-def get_data()
+def get_data():
     import pandas as pd
     susp = pd.read_csv('../input/suspicious/PANDA_Suspicious_Slides.csv')
     # ['marks', 'No Mask', 'Background only', 'No cancerous tissue but ISUP Grade > 0', 'tiss', 'blank']
