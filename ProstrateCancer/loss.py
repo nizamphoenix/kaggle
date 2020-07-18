@@ -29,9 +29,6 @@ class MultiTaskGleasonLoss(nn.Module):
 
     
     
-
-
-
 class TriTaskGleasonLoss(nn.Module):
     def __init__(self, task_num):
         super(TriTaskGleasonLoss, self).__init__()
