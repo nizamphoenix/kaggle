@@ -83,7 +83,11 @@ class KappaScore(ConfusionMatrix):
         return add_metrics(last_metrics, 1-k)
     
     
-    
+  
+
+
+
+
 def get_isup_preds_targs_3targets(preds,targs):
     '''
     metric function for 3 targets: gleason scores and isup
@@ -99,17 +103,22 @@ def get_isup_preds_targs_3targets(preds,targs):
     isup_target = target[:,2]
     
     lookup_map = {(0,0):0,(1,1):1,(1,2):2,(2,1):3,(2,2):4,(3,1):4,(1,3):4,(2,3):5,(3,2):5,(3,3):5}
+    #lookup_map's keys are indices of gleason scores and not gleason scores themselves!
     temp1 = []#for predictions
     temp2 = []#for targets
     count = 0
     errors = 0
     for i in range(len(temp_preds)):
+#         temp1.append(isup_preds[i])
+#         temp2.append(isup_target[i])
+#         print('target={0},prediction={1}'.format(isup_target[i],isup_preds[i]))
         count+=1
         try:
             temp1.append(lookup_map[tuple(temp_preds[i])])
             temp2.append(lookup_map[tuple(gleason_target[i])])
         except KeyError:
-            print(tuple(temp_preds[i])," is missing!",isup_preds[i],isup_target[i])
+            print(tuple(temp_preds[i])," is missing!")
+            print('target={0},prediction={1}'.format(isup_target[i],isup_preds[i]))
             errors+=1
             temp1.append(isup_preds[i])
             temp2.append(isup_target[i])
