@@ -27,7 +27,36 @@ class MultiTaskGleasonLoss(nn.Module):
         
         return loss1+loss2
 
-    
+class BiTaskGleasonLoss(nn.Module):
+    def __init__(self, task_num):
+        super(BiTaskGleasonLoss, self).__init__()
+        self.task_num = task_num
+        self.log_vars = nn.Parameter(torch.zeros((task_num)))
+
+    def forward(self, preds, targets):
+        temp=[]
+        primloss = nn.CrossEntropyLoss(weight=prim_weights)
+        prim_preds  = preds[0]
+        prim_target = targets[:,0].long()
+        loss0 = primloss(prim_preds,prim_target)
+        temp.append(loss0)
+        precision0 = torch.exp(-self.log_vars[0])
+        loss0 = precision0*loss0 + self.log_vars[0]   
+        
+        secloss  = nn.CrossEntropyLoss(weight=sec_weights)
+        sec_preds  = preds[1]
+        sec_target = targets[:,1].long()
+        loss1 = secloss(sec_preds,sec_target)
+        temp.append(loss1)
+        precision1 = torch.exp(-self.log_vars[1])
+        loss1 = precision1*loss1 + self.log_vars[1]   
+        
+        
+        print("precisions:", precision0,precision1)
+        print(self.log_vars[0],self.log_vars[1].dtype)
+        print("simple loss:",sum(temp))
+        print("complicated loss:","loss0+loss1:",loss0+loss1,"loss0+loss1:",loss0+loss1)
+        return loss1+loss0
     
 class TriTaskGleasonLoss(nn.Module):
     def __init__(self, task_num):
