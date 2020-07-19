@@ -1,7 +1,38 @@
 import fastai
 from fastai.vision import *
 from fastai.callbacks import SaveModelCallback
-
+def get_isup_preds_targs_2targets(preds,targs):
+    #predictions
+    prim_preds = preds[0].argmax(-1).view(-1,1)
+    sec_preds  = preds[1].argmax(-1).view(-1,1)
+    gleason_preds = np.array(torch.cat([prim_preds,sec_preds],dim=1).cpu())#converting to np.array for tuple()
+    #targets
+    target = np.array(targs.cpu())#converting to np.array to cast to tuple()
+    gleason_target = target[:,0:2]
+    
+    lookup_map = {(0,0):0,(1,1):1,(1,2):2,(2,1):3,(2,2):4,(3,1):4,(1,3):4,(2,3):5,(3,2):5,(3,3):5}
+    lookup_map2 = {(0,1):1,(0,2):1,(0,3):2,(1,0):1,(2,0):3,(3,0):4}
+    #lookup_map's keys are indices of gleason scores and not gleason scores themselves!
+    temp1 = []#for predictions
+    temp2 = []#for targets
+    count = 0
+    errors = 0
+    for i in range(len(gleason_preds)):
+        count+=1
+        try:
+            temp1.append(lookup_map[tuple(gleason_preds[i])])
+        except KeyError:
+            errors+=1
+            temp1.append(lookup_map2[tuple(gleason_preds[i])])
+            print("missing!")
+        finally:
+            print('target={0},prediction={1}'.format(gleason_target[i],tuple(gleason_preds[i])))
+            temp2.append(lookup_map[tuple(gleason_target[i])])
+            
+    print("count={0},errors={1}".format(count,errors),"correct=",count-errors)
+    final_preds = torch.tensor(temp1,dtype=torch.long,device='cpu')
+    final_targs = torch.tensor(temp2,dtype=torch.long,device='cpu')    
+    return final_preds,final_targs
 def get_isup_preds_targs(preds,target):
     '''
     added helper function to map gleason scores to isup_grade and then evaluate cohen's quadratic kappa score
