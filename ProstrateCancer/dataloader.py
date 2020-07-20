@@ -9,6 +9,8 @@ def open_image(fn:PathOrStr, div:bool=True, convert_mode:str='RGB', cls:type=Ima
         x.div_(255)
     return cls(1.0-x) #invert image for zero padding
 
+
+
 class MImage(ItemBase):
     def __init__(self, imgs):
         self.obj, self.data = \
