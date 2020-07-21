@@ -34,7 +34,7 @@ with custom loss and metrics as provided by the competition hosts.  Each one of 
 There was about 0.1 of a difference between CV score and leaderboard score.  
 
 - lightGBM
-Any predictive modelling task would be incomplete without inclusion of gradient boosting, the lightGBM library is compatible with GPU and facilitates parallel training too. The most crucial element while using lightGBM is the set of hyperparameters which need to be tuned, for this *optuna*'s integration was used to select the best set of hyperparameters with the objective function and the loss fixed at **hinge** and **l1**, respectively.  
+Any predictive modelling task would be incomplete without inclusion of gradient boosting, the lightGBM library is compatible with GPU and facilitates parallel training too. The most crucial element while using lightGBM is the set of hyperparameters which need to be tuned, for this *optuna*'s integration was used to select the best set of hyperparameters with the objective function and the loss fixed at *hinge* and *L1*, respectively.  
 
 - TabNet  
 It is a novel neural-network architechture propounded by Google that uses attention mechanism to perform better with tabular data at predictive modelling tasks. The version provided by *fastAi* was used  and it outperformed the above two approaches. However, unlike the previous two approached all 5 targets were jointly modelled --*multi-task learning*-- to obtain final results with 7 fold cross validation training.  
