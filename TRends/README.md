@@ -33,7 +33,7 @@ Since data is high dimensional(1405 features), computations demanded more power,
 with custom loss and metrics as provided by the competition hosts.  Each one of the 5 targets were modelled separately with Support vector regression, Elastic net and Random forest regressor and the final predictions were blended to produce the final result.   
 There was about 0.1 of a difference between CV score and leaderboard score.  
 
-- lightGBM
+- lightGBM  
 Any predictive modelling task would be incomplete without inclusion of gradient boosting, the lightGBM library is compatible with GPU and facilitates parallel training too. The most crucial element while using lightGBM is the set of hyperparameters which need to be tuned, for this *optuna*'s integration was used to select the best set of hyperparameters with the objective function and the loss fixed at *hinge* and *L1*, respectively.  
 
 - TabNet  
