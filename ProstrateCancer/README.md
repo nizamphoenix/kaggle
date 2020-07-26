@@ -20,5 +20,5 @@ The quantity used to measure the severity of prostrate cancer is the *isup grade
 
 
 - **Training:-**
-- Method-1  
-Only the isup grade was used as the target to train the model, and it resulted in a better score than using gleason scores that is discussed next.
+  - Method-1  
+  Only the isup grade was used as the target to train the model, and it resulted in a better score than using gleason scores that is discussed next.
