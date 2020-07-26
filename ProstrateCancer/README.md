@@ -12,11 +12,6 @@ Also, images were augmented with transforms like random flip to overcome overfit
 
 The quantity used to measure the severity of prostrate cancer is the *isup grade*. It is obtained from *gleason scores* indicating cancer type: 0, 3, 4, or 5. After a given WSI is graded, the most prevalent and the second most prevalent cancerous tissues are considered to construct the *ISUP grade* as shown in the above figure.
 
-- **Models:-**(ISUP grade as the target)  
-- [x] 'facebookresearch/semi-supervised-ImageNet1K-models',model='resnext50_32x4d_ssl'--------0.45 kappa score  
-- [x] 'zhanghang1989/ResNeSt', model='resnest50'                                      --------0.60 kappa score  
-- [x] Se_Resnext_50_4-32                                                              --------0.57 kappa score
-- [x] Inception net-b0                                                                 --------0.91 kappa  score
 
 
 - **Training:-**
@@ -24,6 +19,15 @@ The quantity used to measure the severity of prostrate cancer is the *isup grade
   Only the isup grade was used as the target to train the model, and it resulted in a better score than using gleason scores that is discussed next.
   4-fold stratified cross validation was used to train the models for robustness. Data modelling and training were carried out with the fastai and pytorch libraries due to their interoperability and elegant solutions to data augmentation, customizing metrics & losses, and one_cycle training method by fastai.  
   The models were trained with 12(tiles)images of size 128 x 128 in batches of 32 with crossentropy loss and label smoothing; also since the data was *imbalanced*, appropriate techniques were maneuvered to reduce bias.  
-  Later, after the competition ended, it was observed that using kappa loss = 1-kappa score served as a better loss function.  
- - Method-2  
+  After the competition ended further analysis revealed that using kappa loss = (1-kappa score) served as a better loss function.  
+  
+  - Method-2  
+ Here both the gleason scores were used to train the models as a multitask learning problem expecting the net would learn better representations, which resulted otherwise. I think the problem was that although the data given to us mentions gleason scores it does not specify which portion of the WSI is tagged with majority and minority gleason patterns as shown in the figure(the figure was provided for illustrative purpose only).
+ 
+ - **Models:-**(for Method1)  
+- [x] 'facebookresearch/semi-supervised-ImageNet1K-models',model='resnext50_32x4d_ssl'--------0.45 kappa score  
+- [x] 'zhanghang1989/ResNeSt', model='resnest50'                                      --------0.60 kappa score  
+- [x] Se_Resnext_50_4-32                                                              --------0.57 kappa score
+- [x] Inception net-b0                                                                ---------0.91 kappa  score
+
  
