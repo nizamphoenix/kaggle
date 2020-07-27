@@ -19,7 +19,9 @@ The quantity used to measure the severity of prostrate cancer is the *isup grade
   Only the isup grade was used as the target to train the model, and it resulted in a better score than using gleason scores that is discussed next.
   4-fold stratified cross validation was used to train the models for robustness. Data modelling and training were carried out with the fastai and pytorch libraries due to their interoperability and elegant solutions to data augmentation, customizing metrics & losses, and one_cycle training method by fastai.  
   The models were trained with 12(tiles)images of size 128 x 128 in batches of 32 with crossentropy loss and label smoothing; also since the data was *imbalanced*, appropriate techniques were maneuvered to reduce bias.  
-  After the competition ended further analysis revealed that using kappa loss = (1-kappa score) served as a better loss function.  
+  Also, mixed precision was used to reduce training time.  
+  Furthermore, training was conducted gradually: initially freezing upto the last layer and training, thereafter unfreezing the network and training with discriminating learning rates. However, unfreezing layer-by-layer and training did not serve good results.  
+  After the competition ended, further analysis revealed that using kappa loss = (1-kappa score) gave a better score.  
   
   - Method-2  
  Here both the gleason scores were used to train the models as a multitask learning problem expecting the net would learn better representations, which resulted otherwise. I think the problem was that although the data given to us mentions gleason scores it does not specify which portion of the WSI is tagged with majority and minority gleason patterns as shown in the figure(the figure was provided for illustrative purpose only).
