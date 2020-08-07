@@ -5,4 +5,4 @@ Identifying such manipulated media was the objective of this competition, which 
 More information about the competition can be found [here](https://www.kaggle.com/c/deepfake-detection-challenge/leaderboard)    
 
 ### Approach:-
-Google's Blazeface was used to perform face extraction, and Xception net was used to accomplish the task objective. Please check my work (here)[https://github.com/nizamphoenix/kaggle/blob/master/DFDC/Fa%7Bc%2Ck%7De%20detector.ipynb].
+Google's Blazeface was used to perform face extraction, and Xception net was used to accomplish the task objective. Please check my work [here](https://github.com/nizamphoenix/kaggle/blob/master/DFDC/Fa%7Bc%2Ck%7De%20detector.ipynb).
