@@ -2,8 +2,9 @@ Many diseases, including cancer, are believed to have a contributing factor in c
 More information can be found [here](https://www.kaggle.com/c/liverpool-ion-switching/)      
 
 
-![Image description](./3ddata.png)
+![Image description](./3ddata.png)  
 
+Including previous signal values from the given current signal values shows that the signals have a better chance of being classified as closed or open.  
 #### Approach:  
 The channels are classified broadly into 2 categories, depending on whether they have a low probability of opening(low conductance) or a high probability of opening(high conductance):-  
 
